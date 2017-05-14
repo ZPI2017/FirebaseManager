@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
 
      */
 
+    private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences shared = getSharedPreferences("com.example.janusz.firebasemanager", MODE_PRIVATE);
         if (shared.getBoolean("firstrun", true)) {
-
+            mDatabase = FirebaseDatabase.getInstance().getReference();
             //tu kod do wykonania operacji na bazie
 
 
@@ -49,16 +51,17 @@ public class MainActivity extends AppCompatActivity {
     /*private void modifyCategories() {
         final ArrayList<Category> cats = new ArrayList<>();
 
-        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference().child("categories");
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference mCategories = mDatabase.child("categories");
+        mCategories.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot category : dataSnapshot.getChildren()) {
                     cats.add(new Category(category.getKey().toString(), category.getValue().toString()));
                 }
                 for (Category c : cats) {
-                    mDatabase.child(c.id).setValue(c);
+                    mCategories.child(c.id).setValue(c);
                 }
+            Toast.makeText(MainActivity.this, "Tu Też Pojszło", Toast.LENGTH_LONG).show();
             }
 
             @Override
