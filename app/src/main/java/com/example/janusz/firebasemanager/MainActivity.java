@@ -1,6 +1,5 @@
 package com.example.janusz.firebasemanager;
 
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -14,7 +13,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -23,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     places : {
         [place1] : {
-            lattitude : double
+            latitude : double
             longitude : double
             nazwa : String
             zsczegoly : String
@@ -33,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     locations : {
         [place1] : {
-            lattitude : double
+            latitude : double
             longitude : double
         }
     }
@@ -59,6 +57,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void click(View view) {
         addPrzykladoweWycieczki2();
+    }
+
+    private void modifyLocations() {
+        mDatabase.child("places").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot att : dataSnapshot.getChildren()) {
+                    DatabaseReference mLokacje = mDatabase.child("locations");
+                        String key = att.getKey();
+                        mLokacje.child(key).child("lattitude").setValue(att.child("lattitude").getValue());
+                        mLokacje.child(key).child("longitude").setValue(att.child("longitude").getValue());
+                        mLokacje.child(key).child("name").setValue(att.child("name").getValue().toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void addPrzykladoweWycieczki2() {
@@ -145,8 +163,9 @@ public class MainActivity extends AppCompatActivity {
         for (Atrakcja at : myDataset) {
             String key = mAtrakcje.push().getKey();
             mAtrakcje.child(key).setValue(at);
-            mLokacje.child(key).child("lattitude").setValue(at.getLattitude());
+            mLokacje.child(key).child("latitude").setValue(at.getLatitude());
             mLokacje.child(key).child("longitude").setValue(at.getLongitude());
+            mLokacje.child(key).child("nazwa").setValue(at.getNazwa());
         }
     }
 
